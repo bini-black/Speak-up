@@ -3,7 +3,7 @@
 ## Contributors
 - Binyam Meuz Tekue
 - Firdews Seifu Kemal
-- 
+- Dagimawit Belayineh Bangu
 
 ## Project Synopsis
 
@@ -21,6 +21,6 @@ Fayda provides a secure login system. It helps us make sure that users are real 
 
 ### Tech Stack
 - **Frontend**: HTML, Tailwind CSS, JavaScript or React
-- **Backend**: Node.js with Express or Firebase
-- **Database**: Firebase Firestore or Realtime Database
+- **Backend**: Node.js with Express
+- **Database**: Mysql or MongoDB
 - **Authentication**: VeriFayda OIDC (Fayda Login)
