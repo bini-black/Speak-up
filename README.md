@@ -1,7 +1,8 @@
 # SpeakUp – A Safe Space for Mental Health Support
 
 ## Contributors
-- Binyam Meuz
+- Binyam Meuz Tekue
+- Firdews Seifu Kemal
 - 
 
 ## Project Synopsis
