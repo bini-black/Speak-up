@@ -29,5 +29,5 @@ Fayda provides a secure login system. It helps us ensure that users are real peo
 ### Tech Stack  
 - **Frontend**: HTML, Tailwind CSS, JavaScript or React  
 - **Backend**: Node.js with Express  
-- **Database**: MySQL or MongoDB  
+- **Database**: MongoDB  
 - **Authentication**: VeriFayda OIDC (Fayda Login)
