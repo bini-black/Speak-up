@@ -40,9 +40,6 @@ We aim to build a **trusted, judgment-free community** where verified users feel
 ### Fayda’s Role  
 Fayda provides secure digital ID login. It ensures that users are real people without revealing their names or private data. This protects the community from bots, trolls, and fake accounts, making SpeakUp a safer place to be vulnerable.
 
-### Accessibility  
-We are working to make SpeakUp more inclusive by adding **support for users with visual or hearing impairments** in future versions.
-
 ### Tech Stack  
 - **Frontend**: HTML, Tailwind CSS, JavaScript or React  
 - **Backend**: Node.js with Express  
