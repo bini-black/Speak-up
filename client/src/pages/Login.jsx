@@ -13,50 +13,54 @@ export default function Login() {
   }, []);
 
   function isValidFaydaID(id) {
-    return /^[0-9]{20}$/.test(id);
+    return /^[0-9]{16}$/.test(id);
+  }
+
+  function generateRandomState(length = 16) {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let result = "";
+    for (let i = 0; i < length; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
 
     if (!isValidFaydaID(faydaId)) {
-      setError("Fayda ID must be exactly 20 digits.");
+      setError("Fayda ID must be exactly 16 digits.");
       return;
     }
 
     setError("");
     setLoading(true);
 
-    setTimeout(() => {
-    setLoading(false);
-    localStorage.setItem("token", "mockToken");
-    localStorage.setItem("userFaydaId", faydaId);
-    navigate("/set-password");
-  }, 1500);
-
-    /*
     try {
-      const response = await fetch("http://localhost:5000/api/login(ezih gar asgebut stchersu)", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ faydaId }),
+      // Save the Fayda ID temporarily if needed
+      localStorage.setItem("pendingFaydaId", faydaId);
+
+      // Generate random OAuth state
+      const state = generateRandomState();
+      localStorage.setItem("oauthState", state);
+
+      // Build the authorization URL for Fayda OIDC
+      const params = new URLSearchParams({
+        response_type: "code",
+        client_id: process.env.REACT_APP_CLIENT_ID,
+        redirect_uri: process.env.REACT_APP_REDIRECT_URI,
+        scope: "openid profile email",
+        state,
       });
 
-      const data = await response.json();
+      const authUrl = process.env.REACT_APP_AUTHORIZATION_ENDPOINT + "?" + params.toString();
 
-      if (!response.ok) {
-        throw new Error(data.message || "Login failed.");
-      }
-
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("userFaydaId", faydaId);
-
-      navigate("/set-password");
+      // Redirect to Fayda authorization page
+      window.location.href = authUrl;
     } catch (err) {
-      setError(err.message || "An error occurred.");
-    } finally {
+      setError("Failed to initiate login.");
       setLoading(false);
-    }*/
+    }
   }
 
   return (
@@ -71,7 +75,7 @@ export default function Login() {
           <input
             id="faydaId"
             type="tel"
-            placeholder="Enter your 20-digit Fayda ID"
+            placeholder="Enter your 16-digit Fayda ID"
             value={faydaId}
             onChange={(e) => {
               setFaydaId(e.target.value.trimStart());
@@ -80,13 +84,13 @@ export default function Login() {
             className={`p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500 border-gray-300 ${
               error ? "border-red-500" : ""
             }`}
-            maxLength={20}
+            maxLength={16}
             disabled={loading}
             aria-invalid={!!error}
             aria-describedby="faydaId-error"
             ref={inputRef}
             inputMode="numeric"
-            pattern="[0-9]{20}"
+            pattern="[0-9]{16}"
             autoComplete="off"
           />
 
@@ -97,7 +101,7 @@ export default function Login() {
           )}
           {loading && (
             <p className="text-purple-600 text-sm text-center" role="status" aria-live="polite">
-              Verifying...
+              Redirecting to Fayda login...
             </p>
           )}
 

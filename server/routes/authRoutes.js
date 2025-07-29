@@ -1,47 +1,41 @@
 import express from 'express';
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
-import fs from 'fs';
 import dotenv from 'dotenv';
+import fs from 'fs';
+import User from '../models/User.js';
+import Psychiatrist from '../models/Psychiatrist.js';
 
 dotenv.config();
 
 const router = express.Router();
-
-// Load private key for JWT client assertion (either from env or file)
 const privateKey = process.env.PRIVATE_KEY || fs.readFileSync(process.env.PRIVATE_KEY_PATH, 'utf8');
 
-// POST /api/auth/login — expects { code } from VeriFayda OAuth redirect
 router.post('/login', async (req, res) => {
   const { code } = req.body;
-
-  if (!code) {
-    return res.status(400).json({ error: 'Missing auth code' });
-  }
+  if (!code) return res.status(400).json({ error: 'Missing auth code' });
 
   try {
-    // Create JWT client assertion for VeriFayda token exchange
     const clientAssertion = jwt.sign(
       {
-        iss: process.env.FAYDA_CLIENT_ID,
-        sub: process.env.FAYDA_CLIENT_ID,
-        aud: process.env.FAYDA_TOKEN_ENDPOINT,
+        iss: process.env.CLIENT_ID,
+        sub: process.env.CLIENT_ID,
+        aud: process.env.TOKEN_ENDPOINT,
         jti: Math.random().toString(36).substring(2),
-        exp: Math.floor(Date.now() / 1000) + 300, // 5 minutes expiry
+        exp: Math.floor(Date.now() / 1000) + 300,
       },
       privateKey,
-      { algorithm: 'RS256' }
+      { algorithm: process.env.ALGORITHM || 'RS256' }
     );
 
-    // Exchange code for access token
     const tokenRes = await axios.post(
-      process.env.FAYDA_TOKEN_ENDPOINT,
+      process.env.TOKEN_ENDPOINT,
       new URLSearchParams({
         grant_type: 'authorization_code',
         code,
-        redirect_uri: process.env.FAYDA_REDIRECT_URI,
-        client_id: process.env.FAYDA_CLIENT_ID,
-        client_assertion_type: 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+        redirect_uri: process.env.REDIRECT_URI,
+        client_id: process.env.CLIENT_ID,
+        client_assertion_type: process.env.CLIENT_ASSERTION_TYPE,
         client_assertion: clientAssertion,
       }),
       {
@@ -51,17 +45,49 @@ router.post('/login', async (req, res) => {
 
     const accessToken = tokenRes.data.access_token;
 
-    // Fetch user info from VeriFayda
-    const userInfoRes = await axios.get(process.env.FAYDA_USERINFO_ENDPOINT, {
+    const userInfoRes = await axios.get(process.env.USERINFO_ENDPOINT, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 
-    // Here, you can find or create user in your DB based on userInfoRes.data
-    // For demo, just return user info & token to frontend
+    const faydaUser = userInfoRes.data;
+    let user = await User.findOne({ faydaId: faydaUser.sub });
+    let isPsychiatrist = false;
 
-    res.json({ user: userInfoRes.data, token: accessToken });
+    if (!user) {
+      user = await Psychiatrist.findOne({ faydaId: faydaUser.sub });
+      if (user) isPsychiatrist = true;
+    }
+
+    if (!user) {
+      user = await User.create({
+        faydaId: faydaUser.sub,
+        name: faydaUser.name || '',
+        email: faydaUser.email || '',
+        role: 'user',
+      });
+    }
+
+    const token = jwt.sign(
+      {
+        id: user._id,
+        role: isPsychiatrist ? 'psychiatrist' : user.role || 'user',
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' }
+    );
+
+    res.json({
+      message: 'Login successful',
+      token,
+      user: {
+        id: user._id,
+        name: user.name || '',
+        email: user.email || '',
+        role: user.role,
+      },
+    });
   } catch (error) {
-    console.error('VeriFayda auth error:', error?.response?.data || error.message);
+    console.error('VeriFayda Auth Error:', error?.response?.data || error.message);
     res.status(500).json({ error: 'Failed to authenticate with VeriFayda' });
   }
 });
