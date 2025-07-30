@@ -14,7 +14,7 @@ SpeakUp creates a unique balance between **anonymity and trust**. Users log in w
 Many people experience mental health challenges but avoid speaking up because of stigma, fear of judgment, or lack of privacy. Most online platforms feel unsafe, with fake users and bots, making it harder to open up.
 
 ### Solution  
-**SpeakUp** is a simple and safe chat platform where people can join anonymous support rooms and talk about their feelings with others who truly understand. By using **Fayda digital ID**, users are verified as real people — while remaining completely anonymous to others.
+**SpeakUp** is a simple and safe chat platform where people can join anonymous support rooms and talk about their feelings with others who truly understand. By using **Fayda digital ID**, users are verified as real people, while remaining completely anonymous to others.
 
 ### Target Audience  
 SpeakUp is designed for **teens, young adults, and anyone seeking a supportive space** to talk about mental health — especially in **communities where stigma is still strong**.
@@ -38,10 +38,81 @@ This approach ensures **accessible, trustworthy support**, whether you're chatti
 We aim to build a **trusted, judgment-free community** where verified users feel safe to express themselves. With both **peer support and optional professional guidance**, SpeakUp empowers people to speak honestly, heal together, and know they are not alone.
 
 ### Fayda’s Role  
-Fayda provides secure digital ID login. It ensures that users are real people without revealing their names or private data. This protects the community from bots, trolls, and fake accounts, making SpeakUp a safer place to be vulnerable.
+Fayda provides a secure digital ID login. It ensures that users are real people without revealing their names or private data. This protects the community from bots, trolls, and fake accounts, making SpeakUp a safer place to be vulnerable.
 
 ### Tech Stack  
-- **Frontend**: HTML, Tailwind CSS, JavaScript or React  
+- **Frontend**: HTML, Tailwind CSS, JavaScript, or React  
 - **Backend**: Node.js with Express  
 - **Database**: MySQL or MongoDB  
 - **Authentication**: VeriFayda OIDC (Fayda Login)
+
+## Installation and Deployment
+
+Follow these steps to install and run SpeakUp locally.
+
+### 1. Clone the Repository
+
+
+git clone https://github.com/your-username/speakup.git
+cd speakup 
+
+##Backend
+cd server
+npm install
+
+##Frontend
+cd ../client
+npm install
+
+##Run App Locally
+*We do Both Equally in different terminals
+cd server
+npm start
+
+cd ../client
+npm run dev
+
+Docker Coming soon 
+### How to Use Docker Compose in PowerShell (Windows)
+
+1. **Check Docker installation**  
+   Open PowerShell and run:
+   
+        docker --version
+If you get an error, download and install Docker Desktop
+
+Restart your computer after installation.
+
+Use the correct Docker Compose command
+Docker Compose is now a Docker subcommand. Use:
+
+    docker compose version
+    docker compose build
+    docker compose up
+  Do NOT use docker-compose (with a hyphen).
+
+If Docker commands are not recognized, add Docker to your system PATH:
+
+Search Edit the system environment variables in Windows Start menu
+
+Click Environment Variables…
+
+Under System variables, select Path → Edit → New
+
+Add this path:
+
+C:\Program Files\Docker\Docker\resources\bin
+Click OK, then restart your computer.
+
+Verify Docker Compose again:
+
+    docker compose version
+Run your Docker Compose commands:
+
+    docker compose build
+    docker compose up
+
+
+
+
+
