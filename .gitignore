@@ -30,3 +30,5 @@ server/dist/
 
 # Other
 *.local
+
+server/key/*.pem

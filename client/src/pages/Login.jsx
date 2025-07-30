@@ -37,26 +37,21 @@ export default function Login() {
     setLoading(true);
 
     try {
-      // Save the Fayda ID temporarily if needed
       localStorage.setItem("pendingFaydaId", faydaId);
 
-      // Generate random OAuth state
       const state = generateRandomState();
       localStorage.setItem("oauthState", state);
 
-      // Build the authorization URL for Fayda OIDC
       const params = new URLSearchParams({
         response_type: "code",
         client_id: process.env.REACT_APP_CLIENT_ID,
         redirect_uri: process.env.REACT_APP_REDIRECT_URI,
         scope: "openid profile email",
         state,
+        login_hint: `id:${faydaId}`,
       });
 
-      const authUrl = process.env.REACT_APP_AUTHORIZATION_ENDPOINT + "?" + params.toString();
-
-      // Redirect to Fayda authorization page
-      window.location.href = authUrl;
+      window.location.href = `${process.env.REACT_APP_AUTHORIZATION_ENDPOINT}?${params.toString()}`;
     } catch (err) {
       setError("Failed to initiate login.");
       setLoading(false);
@@ -69,49 +64,47 @@ export default function Login() {
         <h2 className="text-2xl font-bold mb-6 text-center text-purple-700">User Login</h2>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-          <label htmlFor="faydaId" className="sr-only">
-            Fayda ID
-          </label>
-          <input
-            id="faydaId"
-            type="tel"
-            placeholder="Enter your 16-digit Fayda ID"
-            value={faydaId}
-            onChange={(e) => {
-              setFaydaId(e.target.value.trimStart());
-              if (error) setError("");
-            }}
-            className={`p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500 border-gray-300 ${
-              error ? "border-red-500" : ""
-            }`}
-            maxLength={16}
-            disabled={loading}
-            aria-invalid={!!error}
-            aria-describedby="faydaId-error"
-            ref={inputRef}
-            inputMode="numeric"
-            pattern="[0-9]{16}"
-            autoComplete="off"
-          />
-
-          {error && (
-            <p id="faydaId-error" className="text-red-600 text-sm" role="alert">
-              {error}
-            </p>
-          )}
-          {loading && (
-            <p className="text-purple-600 text-sm text-center" role="status" aria-live="polite">
-              Redirecting to Fayda login...
-            </p>
-          )}
+          <div>
+            <label htmlFor="faydaId" className="block text-sm font-medium text-gray-700 mb-1">
+              Fayda ID
+            </label>
+            <input
+              id="faydaId"
+              type="tel"
+              placeholder="Enter your 16-digit Fayda ID"
+              value={faydaId}
+              onChange={(e) => {
+                const value = e.target.value.replace(/\D/g, '');
+                setFaydaId(value);
+                if (error) setError("");
+              }}
+              className={`w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                error ? "border-red-500" : "border-gray-300"
+              }`}
+              maxLength={16}
+              disabled={loading}
+              aria-invalid={!!error}
+              aria-describedby="faydaId-error"
+              ref={inputRef}
+              inputMode="numeric"
+              pattern="[0-9]{16}"
+              autoComplete="off"
+            />
+            {error && (
+              <p id="faydaId-error" className="mt-1 text-sm text-red-600">
+                {error}
+              </p>
+            )}
+          </div>
 
           <button
             type="submit"
             disabled={loading || !isValidFaydaID(faydaId)}
-            className={`bg-purple-600 text-white py-2 rounded hover:bg-purple-700 transition focus:outline-none focus:ring-4 focus:ring-purple-400 disabled:opacity-50 disabled:cursor-not-allowed`}
-            aria-disabled={loading || !isValidFaydaID(faydaId)}
+            className={`w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 ${
+              loading || !isValidFaydaID(faydaId) ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
-            {loading ? "Please wait..." : "Next"}
+            {loading ? "Redirecting..." : "Continue with Fayda"}
           </button>
         </form>
       </div>
