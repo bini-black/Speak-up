@@ -1,52 +1,34 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
-const HomePage = () => {
+export default function Home() {
   const navigate = useNavigate();
 
-  const handleJoin = () => {
-    navigate('/register');
-  };
-
   return (
-    <div className="font-sans text-gray-800">
-      <nav className="bg-blue-700 text-white p-4 flex justify-between items-center shadow-lg">
-        <h1 className="text-2xl font-bold">SpeakUp</h1>
-        <Link to="/login" className="underline">Login</Link>
-      </nav>
+    <main className="min-h-screen flex flex-col items-center justify-center gap-8 px-4 text-center">
+      <div>
+        <h1 className="text-4xl font-bold mb-4">Welcome to SpeakUp</h1>
+        <p className="text-lg text-gray-700 max-w-md mx-auto">
+          SpeakUp is a safe and supportive platform where individuals can discuss mental health issues anonymously and find help.
+        </p>
+      </div>
 
-      <header className="bg-blue-100 py-20 text-center">
-        <h2 className="text-4xl font-bold mb-4">A Safe Space for Mental Health Support</h2>
-        <p className="text-lg mb-6">Join anonymous rooms to talk to people and professionals.</p>
+      <div className="flex flex-col sm:flex-row gap-4">
         <button
-          onClick={handleJoin}
-          className="bg-blue-700 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-600"
+          onClick={() => navigate("/login")}
+          aria-label="Navigate to login page"
+          className="px-6 py-3 bg-purple-600 text-white rounded-lg shadow hover:bg-purple-700 focus:outline-none focus:ring-4 focus:ring-purple-400 transition"
         >
-          Join Us
+          Login
         </button>
-      </header>
-
-      <section className="py-12 px-6 bg-white">
-        <h3 className="text-3xl font-bold mb-4">About Us</h3>
-        <p className="text-lg leading-relaxed">
-          SpeakUp is an initiative to support mental well-being by providing a safe, anonymous chatroom platform.
-        </p>
-      </section>
-
-      <section className="py-12 px-6 bg-gray-100">
-        <h3 className="text-3xl font-bold mb-4">Contact Us</h3>
-        <p>Email: support@speakup.com</p>
-        <p>Phone: +251 912345678</p>
-      </section>
-
-      <section className="py-12 px-6 bg-white">
-        <h3 className="text-3xl font-bold mb-4">About the Chatroom</h3>
-        <p>
-          Our chatrooms allow users to express their thoughts freely and get support from peers and professionals. You can stay anonymous and still feel heard.
-        </p>
-      </section>
-    </div>
+        <button
+          onClick={() => alert("About Us Coming Soon")}
+          aria-label="Learn more about us"
+          className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg shadow hover:bg-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-400 transition"
+        >
+          About Us
+        </button>
+      </div>
+    </main>
   );
-};
-
-export default HomePage;
+}
